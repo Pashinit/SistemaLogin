@@ -1,6 +1,8 @@
 
 import static java.lang.Character.isDigit;
 import static java.lang.Character.isLetter;
+import static java.lang.Character.isLowerCase;
+import static java.lang.Character.isUpperCase;
 import javax.swing.JOptionPane;
 
 /*
@@ -8,10 +10,7 @@ import javax.swing.JOptionPane;
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 
-/**
- *
- * @author vquerido
- */
+
 public class FormRegisto extends javax.swing.JFrame {
 
     /**
@@ -184,16 +183,24 @@ public class FormRegisto extends javax.swing.JFrame {
             mensagemErro("Prenncha todos os campos!");
         }else{
             if (!validaNome(nome))
-                mensagemErro("O campo nome não pode ter numeros e tem de ter 2 caracteres");
+                mensagemErro("O campo Nome não pode ter Numeros, tem de ter 2 ou+ char");
             
-            if (morada.length()<5)
-                mensagemErro("teste");
+            if (!validaEmail(email))
+                mensagemErro("O campo Email inválido");
+            
+            if (morada.length()<6)
+                mensagemErro("O campo Morada tem de ter 5 ou+ char");
             
             if(!validaCampoNumerico(telefone))
                 mensagemErro("O campo Telefone tem de ser numérico e ter 9 digitos");
             
             if(!validaCampoNumerico(nif))
                 mensagemErro("O campo NIF tem de ser numérico e ter 9 digitos");
+            
+            if(!validaPassword(pass))
+                mensagemErro("O campo Password: 8char, 1 ou+ Maiusculas, 1 ou+ Minusculas, 1 ou+ Numeros, 1 ou+ char/especiais");
+            if(!rePass.equals(pass))
+                mensagemErro("O campo Reescreva Password deve se rigual ao campo Password");
                 
         }
         
@@ -292,6 +299,10 @@ public class FormRegisto extends javax.swing.JFrame {
         else{
             for(x=0;x<t;x++){
                 c = v.charAt(x);
+                if (c==' ' && x!=0){
+                    contador++;
+                    continue;
+                }
                 if (isLetter(c))
                     contador++;
             }
@@ -300,4 +311,62 @@ public class FormRegisto extends javax.swing.JFrame {
         }
         return true;
     }
+
+    private boolean validaEmail(String m) {
+        int x;
+        char c;
+        
+        int k = m.indexOf('@');
+        System.out.println("k= "+k);
+        int p = m.indexOf('.',k);
+        System.out.println("p= "+p);
+        int kk = m.indexOf('@',(k+1));
+        System.out.println("kk= "+kk);
+        
+        for(x=0;x<m.length();x++){
+            c = m.charAt(x);
+            
+            if (c==' ')
+                return false;
+        }
+        
+        if (k<0 || p<0){
+            return false;
+        }else if (kk>k)
+            return false;
+        else if(k<p)
+            return true;
+        else
+            return false;     
+    }
+
+    private boolean validaPassword(String pss) {
+
+        int x,contadorL=0,contadorU=0,contadorE=0,contadorD=0;
+        char c;
+        
+        if (pss.length()<8)
+            return false;
+            
+        for (x=0;x<pss.length();x++){
+            c = pss.charAt(x);
+            
+            if (c==' ')
+                return false;
+            if (isLowerCase(c))
+                contadorL++;
+            if (isUpperCase(c))
+                contadorU++;
+            if (isDigit(c))
+                contadorD++;
+            if (!isLetter(c) && !isDigit(c))
+                contadorE++;   
+        }
+        
+        if ((contadorL>0) && (contadorU>0) && (contadorD>0) && (contadorE>0))
+            return true;
+        else
+            return false;
+    }
+
 }
