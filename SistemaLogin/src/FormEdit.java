@@ -1,13 +1,19 @@
 
+import java.awt.List;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import static java.lang.Character.isDigit;
 import static java.lang.Character.isLetter;
 import static java.lang.Character.isLowerCase;
 import static java.lang.Character.isUpperCase;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -15,13 +21,29 @@ import javax.swing.JOptionPane;
  */
 
 
-public class FormRegisto extends javax.swing.JFrame {
+public class FormEdit extends javax.swing.JFrame {
 
     /**
      * Creates new form FormRegisto
      */
-    public FormRegisto() {
+    
+    
+    Login log;
+    
+    public FormEdit() {
         initComponents();
+        
+        ArrayList<String> lista_dados = new ArrayList<String>();
+        lista_dados = lerficheiro(log.login);
+        
+        if (log==null)
+            log=new Login();
+        ctxLoginR.setText(log.login);
+        ctxNome.setText(lista_dados.get(2));
+        ctxEmail.setText(lista_dados.get(3));
+        ctxMorada.setText(lista_dados.get(4));
+        ctxTelefone.setText(lista_dados.get(5));
+        ctxNif.setText(lista_dados.get(6));
     }
 
     /**
@@ -77,6 +99,12 @@ public class FormRegisto extends javax.swing.JFrame {
 
         jLabel6.setText("Reescreva Password");
 
+        ctxNome.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ctxNomeActionPerformed(evt);
+            }
+        });
+
         jButton2.setBackground(new java.awt.Color(204, 204, 204));
         jButton2.setForeground(new java.awt.Color(0, 0, 0));
         jButton2.setText("VALIDAR DADOS");
@@ -88,12 +116,10 @@ public class FormRegisto extends javax.swing.JFrame {
 
         jLabel7.setText("NIF");
 
-        ctxRePass.setText("jPasswordField1");
-
-        ctxPass.setText("jPasswordField2");
-
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/minifaces.png"))); // NOI18N
 
+        ctxLoginR.setEditable(false);
+        ctxLoginR.setEnabled(false);
         ctxLoginR.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ctxLoginRActionPerformed(evt);
@@ -112,18 +138,18 @@ public class FormRegisto extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButton2)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton1))
+                            .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel6)
                                     .addComponent(jLabel5))
                                 .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(ctxPass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(ctxRePass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton2)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton1)))
-                        .addGap(32, 32, 32)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(ctxPass, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
+                                    .addComponent(ctxRePass))))
+                        .addGap(18, 18, 18)
                         .addComponent(jLabel8))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -256,7 +282,15 @@ public class FormRegisto extends javax.swing.JFrame {
 
     private void ctxLoginRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ctxLoginRActionPerformed
         // TODO add your handling code here:
+        JTextField textField = new JTextField();
+        textField.setEnabled(false);
+        textField.setEditable(false);
     }//GEN-LAST:event_ctxLoginRActionPerformed
+
+    private void ctxNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ctxNomeActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_ctxNomeActionPerformed
 
     /**
      * @param args the command line arguments
@@ -415,13 +449,17 @@ public class FormRegisto extends javax.swing.JFrame {
         String nomef;
         
         nomef = loginR+".txt";
-
+        System.out.println(nome);
+        System.out.println(email);
+        System.out.println(nomef);
+        
         File ficheiro = new File (nomef);
-        if(!ficheiro.exists()){
+        
             try {
-                ficheiro.createNewFile();
-                
-                FileWriter fw = new FileWriter(ficheiro,true);
+                if(!ficheiro.exists()){
+                    ficheiro.createNewFile();
+                }
+                FileWriter fw = new FileWriter(ficheiro,false);
                 BufferedWriter bw = new BufferedWriter(fw);
                 bw.write(pass);
                 bw.newLine();
@@ -437,13 +475,13 @@ public class FormRegisto extends javax.swing.JFrame {
                 bw.newLine();
                 bw.write(nif);
                 bw.newLine();
-                
+               
                 bw.close();
                 fw.close();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-        }
+        
     }
 
     private boolean validaLoginR(String v) {
@@ -468,6 +506,31 @@ public class FormRegisto extends javax.swing.JFrame {
         return true;
     }
 
-   
+    private ArrayList<String> lerficheiro(String login) {
+        String utilizador;
+        ArrayList<String> dados = new ArrayList<String>();
+        
+        
+        utilizador = log.login;
+        File ficheiro = new File (utilizador+".txt");
+        System.out.println(utilizador);
+        
+        try {
+                FileReader fr = new FileReader(ficheiro);
+                BufferedReader  br = new BufferedReader(fr);
+                while (br.ready()){
+                    String linha = br.readLine();   
+                        dados.add(linha);
+                        System.out.println(dados);    
+                }
+                br.close();
+                fr.close();
+            } catch (FileNotFoundException ex){
+                ex.printStackTrace();
+            } catch (IOException ioe){
+                ioe.printStackTrace();
+            }
+        return dados;
+    }
 
 }

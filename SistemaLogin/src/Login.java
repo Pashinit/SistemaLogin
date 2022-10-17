@@ -1,3 +1,11 @@
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import javax.swing.JOptionPane;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -8,7 +16,7 @@
  * @author vquerido
  */
 public class Login extends javax.swing.JFrame {
-
+    public static String login;
     /**
      * Creates new form Login
      */
@@ -43,6 +51,11 @@ public class Login extends javax.swing.JFrame {
         jButton3.setBackground(new java.awt.Color(204, 204, 204));
         jButton3.setForeground(new java.awt.Color(0, 0, 0));
         jButton3.setText("Iniciar Sessão");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setBackground(new java.awt.Color(204, 204, 204));
         jButton4.setForeground(new java.awt.Color(0, 0, 0));
@@ -50,6 +63,12 @@ public class Login extends javax.swing.JFrame {
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
+            }
+        });
+
+        ctxLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ctxLoginActionPerformed(evt);
             }
         });
 
@@ -108,6 +127,40 @@ public class Login extends javax.swing.JFrame {
         fr.setVisible(true);
     }//GEN-LAST:event_jButton4ActionPerformed
 
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        /*Validação através da recolha e comparação de password e login
+        1. verficar se existe ficheiro "login.txt"
+        2.verificar se a password corresponde à pass que está no ficheiro 
+        se sim, segue para a JFrame Form MenuOpcoes
+        */
+        //se login e password corretos faz isto que se segue
+        
+        login = ctxLogin.getText();
+        String pass = ctxPassword.getText();
+        if (pass.equals("") ||
+            login.equals("")){
+            mensagemErro("Login e password inválidos");
+        }else if (validar(login,pass)){
+                MenuOpcoes mo = new MenuOpcoes();
+                this.setVisible(false);
+                mo.setVisible(true);
+        }else{
+            mensagemErro("Login e password inválidos");
+        }
+        
+        
+        //senão, lança um alert de dados de login incorretos
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void mensagemErro(String erro){
+        JOptionPane.showMessageDialog(null, erro, "Erro validação", JOptionPane.ERROR_MESSAGE);
+    }
+    
+    
+    private void ctxLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ctxLoginActionPerformed
+        
+    }//GEN-LAST:event_ctxLoginActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -153,4 +206,41 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPasswordField jPasswordField1;
     // End of variables declaration//GEN-END:variables
+
+    private boolean validar(String login, String pass) {
+        File ficheiro = new File (login+".txt");
+        
+        if(!ficheiro.exists()){
+            mensagemErro("Login não Registado");
+            return false;
+        }else{
+            
+            try {
+                FileReader fr = new FileReader(ficheiro);
+                BufferedReader  br = new BufferedReader(fr);
+                while (br.ready()){
+                    String linha = br.readLine();
+                    if (linha.equals(pass)){
+                        break;  
+                    }else{
+                        mensagemErro("Password Inválida");
+                        br.close();
+                        fr.close();
+                        return false;
+                    }       
+                }
+                br.close();
+                fr.close();
+            } catch (FileNotFoundException ex){
+                ex.printStackTrace();
+            } catch (IOException ioe){
+                ioe.printStackTrace();
+            }
+        }
+        
+        return true;
+        
+    }
+
+  
 }
