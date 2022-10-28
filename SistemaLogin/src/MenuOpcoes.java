@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /*
@@ -26,7 +29,7 @@ public class MenuOpcoes extends javax.swing.JFrame {
         initComponents();
         if (log==null)
             log=new Login();
-        System.out.println(log.login);
+        //System.out.println(log.login);
     }
 
     /**
@@ -149,21 +152,37 @@ public class MenuOpcoes extends javax.swing.JFrame {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
-        FormEdit fr = new FormEdit();
-        this.setVisible(false);
-        fr.setVisible(true);
+        FormEdit fr;
+        try {
+            fr = new FormEdit();
+            this.setVisible(false);
+            fr.setVisible(true);
+        
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuOpcoes.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // Mostrar utilizadores registados
-        File ficheiro = new File("C:\\Users\\vquerido/Desktop\\JAVAGIT\\ProjetoLogin\\SistemaLogin\\SistemaLogin");
-        File [] lista = ficheiro.listFiles();
-        System.out.println(">>> Lista de Utilizadores <<<");
-        for(int x=0;x<lista.length;x++){
-            if (lista[x].getName().endsWith(".txt"))
-            System.out.println(lista[x].getName().replace(".txt", ""));
+//        File ficheiro = new File("C:\\Users\\vquerido/Desktop\\JAVAGIT\\ProjetoLogin\\SistemaLogin\\SistemaLogin");
+//        File [] lista = ficheiro.listFiles();
+//        System.out.println(">>> Lista de Utilizadores <<<");
+//        for(int x=0;x<lista.length;x++){
+//            if (lista[x].getName().endsWith(".txt"))
+//            System.out.println(lista[x].getName().replace(".txt", ""));
+//        }
+        
+        TabelaBD tb = null;
+        try {
+            tb = new TabelaBD();
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuOpcoes.class.getName()).log(Level.SEVERE, null, ex);
         }
+        this.setVisible(false);
+        tb.setVisible(true);
+        
     }//GEN-LAST:event_jButton1ActionPerformed
     
      private void mensagemErro(String erro){
@@ -175,20 +194,29 @@ public class MenuOpcoes extends javax.swing.JFrame {
         String utilizador;
         utilizador = log.login;
        
-        File ficheiro = new File (utilizador+".txt");
-        System.out.println(utilizador);
- 
-        if (ficheiro.delete()) {
-            System.out.println("File deleted successfully");
-            //fechar
-            Login log = new Login();
-            this.dispose();             //fecha a janela
-            log.setVisible(true);
-        }
-        else {
-            System.out.println("Failed to delete the file");
+        try {
+            //        File ficheiro = new File (utilizador+".txt");
+//        System.out.println(utilizador);
+// 
+//        if (ficheiro.delete()) {
+//            System.out.println("File deleted successfully");
+//            //fechar
+//            Login log = new Login();
+//            this.dispose();             //fecha a janela
+//            log.setVisible(true);
+//        }
+//        else {
+//            System.out.println("Failed to delete the file");
+//        }
+
+        LigaBD.removeSelf(utilizador);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuOpcoes.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        
+        this.dispose();             //fecha a janela
+        log.setVisible(true);
         
     }//GEN-LAST:event_jButton2ActionPerformed
 

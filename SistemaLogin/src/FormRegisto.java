@@ -7,6 +7,9 @@ import static java.lang.Character.isDigit;
 import static java.lang.Character.isLetter;
 import static java.lang.Character.isLowerCase;
 import static java.lang.Character.isUpperCase;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /*
@@ -76,6 +79,12 @@ public class FormRegisto extends javax.swing.JFrame {
         jLabel5.setText("Password");
 
         jLabel6.setText("Reescreva Password");
+
+        ctxTelefone.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ctxTelefoneActionPerformed(evt);
+            }
+        });
 
         jButton2.setBackground(new java.awt.Color(204, 204, 204));
         jButton2.setForeground(new java.awt.Color(0, 0, 0));
@@ -234,6 +243,12 @@ public class FormRegisto extends javax.swing.JFrame {
         }else if (!validaLoginR(loginR)){
                 mensagemErro("O campo Login não pode ter Numeros, tem de ter 2 ou+ char");
         }else{
+                
+            try {
+                LigaBD.registaUtilizador(nome, email, morada, Integer.parseInt(telefone), Integer.parseInt(nif), loginR, pass);
+            } catch (SQLException ex) {
+                Logger.getLogger(FormRegisto.class.getName()).log(Level.SEVERE, null, ex);
+            }
                 registar(nome,email,morada,telefone,nif,pass,loginR);
                 this.dispose();
                 Login L = new Login();
@@ -257,6 +272,10 @@ public class FormRegisto extends javax.swing.JFrame {
     private void ctxLoginRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ctxLoginRActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_ctxLoginRActionPerformed
+
+    private void ctxTelefoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ctxTelefoneActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ctxTelefoneActionPerformed
 
     /**
      * @param args the command line arguments

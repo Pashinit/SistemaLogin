@@ -1,5 +1,4 @@
 
-import java.awt.List;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,7 +10,13 @@ import static java.lang.Character.isDigit;
 import static java.lang.Character.isLetter;
 import static java.lang.Character.isLowerCase;
 import static java.lang.Character.isUpperCase;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
@@ -30,10 +35,10 @@ public class FormEdit extends javax.swing.JFrame {
     
     Login log;
     
-    public FormEdit() {
+    public FormEdit() throws SQLException {
         initComponents();
-        
-        ArrayList<String> lista_dados = new ArrayList<String>();
+        //---PREENCHIMENTO ATRAVEZ DO DOC TXT---
+        /*ArrayList<String> lista_dados = new ArrayList<String>();
         lista_dados = lerficheiro(log.login);
         
         if (log==null)
@@ -43,7 +48,25 @@ public class FormEdit extends javax.swing.JFrame {
         ctxEmail.setText(lista_dados.get(3));
         ctxMorada.setText(lista_dados.get(4));
         ctxTelefone.setText(lista_dados.get(5));
-        ctxNif.setText(lista_dados.get(6));
+        ctxNif.setText(lista_dados.get(6));*/
+        
+        Connection liga = LigaBD.ligacao();
+        String sql = "SELECT * FROM utilizador WHERE login = '"+Login.login+"'";
+        PreparedStatement ps = liga.prepareStatement(sql);
+        
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()){
+            if (log==null)
+                log=new Login();
+        
+            ctxLoginR.setText(rs.getString(7));
+            ctxNome.setText(rs.getString(2));
+            ctxEmail.setText(rs.getString(3));
+            ctxMorada.setText(rs.getString(4));
+            ctxTelefone.setText(rs.getString(5));
+            ctxNif.setText(rs.getString(6));
+            
+        }
     }
 
     /**
@@ -261,6 +284,11 @@ public class FormEdit extends javax.swing.JFrame {
                 mensagemErro("O campo Login não pode ter Numeros, tem de ter 2 ou+ char");
         }else{
                 registar(nome,email,morada,telefone,nif,pass,loginR);
+            try {
+                LigaBD.atualizaUtilizador(nome, email, morada, Integer.parseInt(telefone), Integer.parseInt(nif), loginR, pass);
+            } catch (SQLException ex) {
+                Logger.getLogger(FormEdit.class.getName()).log(Level.SEVERE, null, ex);
+            }
                 this.dispose();
                 Login L = new Login();
                 L.setVisible(true);
@@ -534,3 +562,4 @@ public class FormEdit extends javax.swing.JFrame {
     }
 
 }
+

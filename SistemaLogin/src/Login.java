@@ -4,6 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /*
@@ -140,12 +146,16 @@ public class Login extends javax.swing.JFrame {
         if (pass.equals("") ||
             login.equals("")){
             mensagemErro("Login e password inválidos");
-        }else if (validar(login,pass)){
+        }else try {
+            if (validar(login,pass)){
                 MenuOpcoes mo = new MenuOpcoes();
                 this.setVisible(false);
                 mo.setVisible(true);
-        }else{
-            mensagemErro("Login e password inválidos");
+            }else{
+                mensagemErro("Login e password inválidos");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         
@@ -207,38 +217,42 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JPasswordField jPasswordField1;
     // End of variables declaration//GEN-END:variables
 
-    private boolean validar(String login, String pass) {
-        File ficheiro = new File (login+".txt");
+    private boolean validar(String login, String pass) throws SQLException {
+//        File ficheiro = new File (login+".txt");
+//        
+//        if(!ficheiro.exists()){
+//            mensagemErro("Login não Registado");
+//            return false;
+//        }else{
+//            
+//            try {
+//                FileReader fr = new FileReader(ficheiro);
+//                BufferedReader  br = new BufferedReader(fr);
+//                while (br.ready()){
+//                    String linha = br.readLine();
+//                    if (linha.equals(pass)){
+//                        break;  
+//                    }else{
+//                        mensagemErro("Password Inválida");
+//                        br.close();
+//                        fr.close();
+//                        return false;
+//                    }       
+//                }
+//                br.close();
+//                fr.close();
+//            } catch (FileNotFoundException ex){
+//                ex.printStackTrace();
+//            } catch (IOException ioe){
+//                ioe.printStackTrace();
+//            }
+//        }
+        Connection liga = LigaBD.ligacao();
+        String sql = "SELECT login AND password FROM utilizador WHERE login = '"+login+"' AND password = '"+pass+"'";
+        PreparedStatement ps = liga.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
         
-        if(!ficheiro.exists()){
-            mensagemErro("Login não Registado");
-            return false;
-        }else{
-            
-            try {
-                FileReader fr = new FileReader(ficheiro);
-                BufferedReader  br = new BufferedReader(fr);
-                while (br.ready()){
-                    String linha = br.readLine();
-                    if (linha.equals(pass)){
-                        break;  
-                    }else{
-                        mensagemErro("Password Inválida");
-                        br.close();
-                        fr.close();
-                        return false;
-                    }       
-                }
-                br.close();
-                fr.close();
-            } catch (FileNotFoundException ex){
-                ex.printStackTrace();
-            } catch (IOException ioe){
-                ioe.printStackTrace();
-            }
-        }
-        
-        return true;
+        return rs.next();
         
     }
 
