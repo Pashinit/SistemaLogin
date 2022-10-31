@@ -149,10 +149,37 @@ public class TabelaBD extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        System.out.println(jTable1);
-        for (int i=0;i<1;i++)
-        {
-            System.out.println(jTable1.getComponentAt(i, i));
+//        System.out.println(jTable1);
+//        for (int i=0;i<1;i++)
+//        {
+//            System.out.println(jTable1.getComponentAt(i, i));
+//        }
+        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        if (jTable1.getSelectedRow() >= 0){
+            int i =JOptionPane.showConfirmDialog(null,"Pretende Editar", "Tem a Certeza?", JOptionPane.YES_NO_OPTION);
+            if(i==JOptionPane.YES_OPTION){
+            	int p = (int)jTable1.getValueAt(jTable1.getSelectedRow(),0);
+                int index = jTable1.getSelectedRow();
+                System.out.println(p);
+                System.out.println(index);
+                try {
+                    String nome = (String) jTable1.getValueAt(index, 1);
+                    String email = (String) jTable1.getValueAt(index, 2);
+                    String morada = (String) jTable1.getValueAt(index, 3);
+                    int telefone = (int) jTable1.getValueAt(index, 4);
+                    int nif = (int) jTable1.getValueAt(index, 5);
+                    String login = (String) jTable1.getValueAt(index, 6);
+                    String pass = (String) jTable1.getValueAt(index, 7);
+                    LigaBD.atualizaUtilizador(nome, email, morada, telefone, nif, login, pass);
+                    TabelaBD mo = new TabelaBD();
+                    this.setVisible(false);
+                    mo.setVisible(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(TabelaBD.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }    
+        }else{
+            JOptionPane.showMessageDialog(null, "Favor selecionar uma linha");
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
